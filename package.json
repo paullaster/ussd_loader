@@ -1,0 +1,30 @@
+{
+  "name": "ussd_loader",
+  "version": "1.0.0",
+  "description": "This is universal airtime loader for all service providers in Kenya",
+  "main": "app.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paullaster/ussd_loader.git"
+  },
+  "keywords": [
+    "ussd"
+  ],
+  "author": "Paullaster Okoth",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/paullaster/ussd_loader/issues"
+  },
+  "homepage": "https://github.com/paullaster/ussd_loader#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.12.7",
+    "ussd-menu-builder": "^1.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.7"
+  }
+}
