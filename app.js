@@ -9,6 +9,8 @@ const app = express();
 let menu = new ussdMenu();
 const PORT = 8585;
 
+//Models
+const userTransaction = require('./models/user_transaction');
 
 //Mongoose connection
 const database_uri = 'mongodb+srv://ussdadmin:ussdadmin@ussdloader.yg3nc.mongodb.net/ussdloader?retryWrites=true&w=majority';
@@ -42,18 +44,21 @@ app.post('/', (req,res) =>{
     const {phoneNumber, text, sessionId} = req.body;
     let response;
 
-    //Define menu states
-    menu.startState({
-        run: () =>{
-            //CON: to send response without terminating the session
-            menu.con(`Welcome to Universal Loader\n
-            Choose your service provider\n
-            1. Safaricom \n 2. Airtel \n 3. Telcom`);
-        }
-       
-    });
-    console.log(response);
-
+    if(text === ''){
+        response = `CON Welcome to Universal loader\n Choose your service provider\n1. Safaricom\n2. Airtel\n3. Telcom`;
+    }
+    let input_val = Number(text);
+    if(input_val === 1){
+        if(text !== ''){
+            response = `CON Top up \n 1. My number \n 2. Other number`;
+         }
+    }
+    //Set timer delay
+    setTimeout(()=>{
+        
+        res.send(response);
+        res.end();
+    },500)
 });
 
 
