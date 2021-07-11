@@ -7,7 +7,7 @@ const mongoose = require('mongoose');
 //Global varialbles
 const app = express();
 let menu = new ussdMenu();
-const PORT = 8585;
+const PORT = 9595;
 
 //Models
 const userTransaction = require('./models/user_transaction');
@@ -32,37 +32,69 @@ db.once('open', () =>{
 //Express body parser
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
-
-
+//Menus
+menu.startState({
+    run: ()=>{
+        menu.con(`Welcome to universal loader. \n 
+        Please choose your service provider. \n
+        1.Safaricom\n
+        2.Airtel\n
+        3.Telcom`);
+    },
+    next: {
+        '1':'safaricom',
+        '2':'airtel',
+        '3':'telcom',
+    },
+    defaultNext: 'Invalid option'
+})
+menu.state('safaricom',{
+    run:()=>{
+        menu.con(`Buy airtime for\n
+        1.My Number\n
+        2.Other Number`);
+    },
+    next:{
+        '1':'myNumber',
+        '2':'otherNumber',
+    },
+    defaultNext: 'Invalid option'
+})
+menu.state('myNumber',{
+    run:()=>{
+        menu.con('Enter amount');
+    },
+    next:{
+        '*\\d+':'myNumber.amount',
+    }
+})
+menu.state('myNumber.amount',{
+    run: ()=>{
+        let amount = Number(menu.val);
+        buyAirtime(menu.args.phoneNumber, amount)
+        .then(res=>{
+            menu.end("Airtime bought successfully");
+        })
+    }
+})
 
 
 
 app.get('/', (req,res) =>{
     res.send("Logged to the UI");
 });
-app.post('/', (req,res) =>{
-    const {phoneNumber, text, sessionId} = req.body;
-    let response;
-
-    if(text === ''){
-        response = `CON Welcome to Universal loader\n Choose your service provider\n1. Safaricom\n2. Airtel\n3. Telcom`;
-    }
-    let input_val = Number(text);
-    if(input_val === 1){
-        if(text !== ''){
-            response = `CON Top up \n 1. My number \n 2. Other number`;
-         }
-    }
-    //Set timer delay
-    setTimeout(()=>{
-        
-        res.send(response);
-        res.end();
-    },500)
-});
-
-
-
+app.post('/ussd', (req,res) =>{
+    console.log(req.body);
+    // let args = {
+    //     phoneNumber: req.body.phoneNumber,
+    //     text: req.body.text,
+    //     sessionId:req.body.sessionId,
+    //     serviceCode: req.body.serviceCode,
+    // };
+    // menu.run(args, argsMsg =>{
+    //     res.send(argsMsg);
+    // });
+    })
 app.listen(PORT, () =>{
     console.log(`Listening on port ${PORT}`);
 });
